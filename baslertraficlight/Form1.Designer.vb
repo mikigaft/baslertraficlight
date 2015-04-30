@@ -109,6 +109,8 @@ Partial Class Form1
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.Size = New System.Drawing.Size(285, 20)
         Me.TextBox1.TabIndex = 8
+        Me.TextBox1.Text = "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=RECIPE;Data " & _
+    "Source=PROGRAMMING-PC;"
         '
         'Label2
         '

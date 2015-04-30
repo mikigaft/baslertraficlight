@@ -1,4 +1,5 @@
-﻿Imports System.Data.SqlClient
+﻿Imports System
+Imports System.Data.SqlClient
 Imports System.Configuration
 
 Public Class Form1
@@ -46,7 +47,7 @@ Public Class Form1
                 'oDR.Item("RUN"))
             Loop
         Catch oExcept As Exception
-            'MessageBox.Show(oExcept.Message)
+            MessageBox.Show(oExcept.Message)
             Debug.Print(oExcept.Message)
         End Try
 
@@ -59,9 +60,19 @@ Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Dim sConnectionString = "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=RECIPE;Data Source=PROGRAMMING-PC;"
+        Dim sConnectionString As String ' = "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=RECIPE;Data Source=PROGRAMMING-PC;"
         Dim sSelectQuery = "SELECT [SheetCode] ,[Judgement] ,[CreatedAt] ,[Type] FROM [SNet].[dbo].[SheetJudgementResult] WHERE [SheetCode] = (SELECT TOP 1 [SheetCode] FROM [SheetJudgementResult] ORDER BY [CreatedAt] DESC)"
         Timer1.Enabled = False
+
+        'sConnectionString = System.Configuration.ConfigurationManager.AppSettings("")
+
+        'sConnectionString = System.Configuration.ConfigurationSettings.AppSettings("ConnectionString")
+        'sConnectionString = ConfigurationSettings.ConnectionStrings("WingtipToys").ConnectionString
+
+        'sConnectionString = ConfigurationSettings.AppSettings("connectionString").ConnectionString
+        sConnectionString = ConfigurationSettings.GetConfig("connectionString").ConnectionString
+
+        'ReadSetting(sConnectionString)
 
         Try
             oCmd = New SqlClient.SqlCommand()
@@ -70,34 +81,42 @@ Public Class Form1
                 .Connection.Open()
                 .CommandText = sSelectQuery
             End With
+            Timer1.Interval = 15000
+            Timer1.Enabled = True
 
         Catch oExcept As Exception
+            Debug.Print(oExcept.Message)
             MessageBox.Show(oExcept.Message)
-            End
+            'End
 
         End Try
 
-        Timer1.Interval = 15
-        Timer1.Enabled = True
 
 
 
     End Sub
 
     Private Sub bSave_Click(sender As Object, e As EventArgs) Handles bSave.Click
+        MessageBox.Show("SAVE")
+    End Sub
+
+
+    Sub AddUpdateAppSettings(key As String, value As String)
+
+        'Try
+        '    Dim configFile = ConfigurationSettings.OpenExeConfiguration() '(ConfigurationUserLevel.None)
+        '    Dim settings = configFile.AppSettings.Settings
+        '    If IsNothing(settings(key)) Then
+        '        settings.Add(key, value)
+        '    Else
+        '        settings(key).Value = value
+        '    End If
+        '    configFile.Save(ConfigurationSaveMode.Modified)
+        '    ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name)
+        'Catch e As ConfigurationErrorsException
+        '    Console.WriteLine("Error writing app settings")
+        'End Try
 
     End Sub
 
-    Sub ReadSetting(key As String)
-        Try
-            Dim appSettings = ConfigurationManager.AppSettings
-            Dim result As String = appSettings(key)
-            If IsNothing(result) Then
-                result = "Not found"
-            End If
-            Console.WriteLine(result)
-        Catch e As ConfigurationErrorsException
-            Console.WriteLine("Error reading app settings")
-        End Try
-    End Sub
 End Class
